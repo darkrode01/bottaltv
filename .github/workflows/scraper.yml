@@ -33,12 +33,13 @@ jobs:
    # 4. ส่งไฟล์ playlist.m3u ที่ได้ เข้าไปยัง Cloudflare KV ทันที
     - name: Upload to Cloudflare KV
       env:
+        # ใช้ชื่อตัวแปรมาตรฐานที่ Wrangler 4.x รู้จักและดึงไปใช้เองอัตโนมัติ
         CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
         KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID }}
       run: |
         # ติดตั้งเครื่องมือ Wrangler ของ Cloudflare แบบชั่วคราว
         npm install -g wrangler
         
-        # ใส่พารามิเตอร์ --account-id และ --namespace-id แบบระบุตรง ๆ เพื่อแก้ปัญหา Code 7003
-        wrangler kv key put "playlist" --path=playlist.m3u --account-id=$ACCOUNT_ID --namespace-id=$KV_NAMESPACE_ID --remote
+        # ปรับเหลือแค่อาร์กิวเมนต์ที่ Wrangler กำหนดไว้ใน OPTIONS (ระบุแค่ namespace-id และ remote)
+        wrangler kv key put "playlist" --path=playlist.m3u --namespace-id=$KV_NAMESPACE_ID --remote
