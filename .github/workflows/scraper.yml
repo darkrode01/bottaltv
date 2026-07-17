@@ -23,10 +23,13 @@ jobs:
         distribution: 'temurin'
 
     # 3. สั่งคอมไพล์และรันโปรแกรม Java เพื่อสร้างไฟล์ playlist.m3u
+    # (อัปเดตใหม่: กระโดดเข้าโฟลเดอร์ bolttv-scraper ก่อนคอมไพล์)
     - name: Compile and Run Java Scraper
       run: |
+        cd bolttv-scraper
         javac Main.java L0/*.java F/*.java
         java Main
+        mv playlist.m3u ../playlist.m3u
 
     # 4. ส่งไฟล์ playlist.m3u ที่ได้ เข้าไปยัง Cloudflare KV ทันที
     - name: Upload to Cloudflare KV
