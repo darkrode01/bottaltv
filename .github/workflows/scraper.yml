@@ -40,4 +40,4 @@ jobs:
         npm install -g wrangler
         
         # ใช้คำสั่งที่ถูกต้องตาม Wrangler ล่าสุด
-        wrangler kv key put --binding=IPTV_STORE "playlist" --path=playlist.m3u
+       wrangler kv key put --binding=IPTV_STORE --account-id=$CF_ACCOUNT_ID "playlist" --path=playlist.m3u
