@@ -33,11 +33,13 @@ jobs:
     # 4. ส่งไฟล์ playlist.m3u ที่ได้ เข้าไปยัง Cloudflare KV ทันที
     - name: Upload to Cloudflare KV
       env:
-        CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
-        CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        # เปลี่ยนชื่อตัวแปรให้ตรงตามมาตรฐานใหม่ของ Wrangler เพื่อตัดปัญหาเรื่องสิทธิ์
+        CLOUDFLARE_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+        KV_NAMESPACE_ID: ${{ secrets.CF_KV_NAMESPACE_ID }}
       run: |
         # ติดตั้งเครื่องมือ Wrangler ของ Cloudflare แบบชั่วคราว
         npm install -g wrangler
         
-        # ใช้คำสั่งที่ถูกต้องตาม Wrangler ล่าสุด
-        wrangler kv key put --binding=IPTV_STORE "playlist" --path=playlist.m3u
+        # รันคำสั่งยัดข้อมูลเข้า Cloudflare KV แบบระบุ Namespace ID และใส่พารามิเตอร์ --remote
+        wrangler kv key put "playlist" --path=playlist.m3u --namespace-id=$KV_NAMESPACE_ID --remote
