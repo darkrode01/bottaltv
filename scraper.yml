@@ -1,0 +1,41 @@
+name: BoltTV Auto Scraper
+
+on:
+  schedule:
+    # ตั้งค่าให้รันอัตโนมัติทุกๆ 3 ชั่วโมง (ตั้งค่าตามต้องการแบบ Cron format)
+    - cron: '0 */3 * * *'
+  workflow_dispatch: # ปุ่มกดให้ทำงานเองแบบ Manual ได้ด้วย
+
+jobs:
+  build-and-run:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. ดึงโค้ดจาก GitHub ลงมาเครื่องจำลอง
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    # 2. ติดตั้งระบบ Java สำหรับคอมไพล์
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    # 3. สั่งคอมไพล์และรันโปรแกรม Java เพื่อสร้างไฟล์ playlist.m3u
+    - name: Compile and Run Java Scraper
+      run: |
+        javac Main.java L0/*.java F/*.java
+        java Main
+
+    # 4. ส่งไฟล์ playlist.m3u ที่ได้ เข้าไปยัง Cloudflare KV ทันที
+    - name: Upload to Cloudflare KV
+      env:
+        CF_API_TOKEN: ${{ secrets::CF_API_TOKEN }}
+        CF_ACCOUNT_ID: ${{ secrets::CF_ACCOUNT_ID }}
+      run: |
+        # ติดตั้งเครื่องมือ Wrangler ของ Cloudflare แบบชั่วคราว
+        npm install -g wrangler
+        
+        # ใช้ Wrangler สั่งเขียนข้อมูลไฟล์เข้า KV (แทนค่ากุญแจที่ชื่อ playlist)
+        wrangler kv:key put --binding=IPTV_STORE "playlist" --path=playlist.m3u
