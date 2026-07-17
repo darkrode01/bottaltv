@@ -39,5 +39,5 @@ jobs:
         # ติดตั้งเครื่องมือ Wrangler ของ Cloudflare แบบชั่วคราว
         npm install -g wrangler
         
-        # ใช้ Wrangler สั่งเขียนข้อมูลไฟล์เข้า KV (แทนค่ากุญแจที่ชื่อ playlist)
-        wrangler kv:key put --binding=IPTV_STORE "playlist" --path=playlist.m3u
+        # ใช้คำสั่งที่ถูกต้องตาม Wrangler ล่าสุด
+        wrangler kv key put --binding=IPTV_STORE "playlist" --path=playlist.m3u
